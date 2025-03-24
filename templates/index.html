@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <title>Fashion Recommendation</title>
+  <!-- Google Fonts - Playfair Display for headings, Poppins for body text -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <!-- Swiper CSS for carousel -->
+  <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+  <style>
+    /* Reset and base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem 1rem;
+      position: relative;
+      overflow-x: hidden;
+      background-color: #000;
+      /* Fallback color */
+    }
+
+    /* Background image with overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://hebbkx1anhila5yf.public.blob.vercel-storage.com/milad-fakurian-KRDupweebHE-unsplash.jpg-HM1CJpgCcQ6tl8VZlbBmc7dNhNffAZ.jpeg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      filter: blur(8px) brightness(0.7);
+      /* Blur and darken the image */
+      z-index: -2;
+    }
+
+    /* Additional darkening overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      /* Dark overlay */
+      z-index: -1;
+    }
+
+    /* Main container with glassmorphism effect */
+    .app-container {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 800px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Header section with gradient */
+    .app-header {
+      background: linear-gradient(135deg, rgba(106, 17, 203, 0.7), rgba(37, 117, 252, 0.7));
+      padding: 2.5rem 2rem 1.5rem;
+      text-align: center;
+      position: relative;
+      color: white;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Glassmorphism effect for header */
+    .app-header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: -1;
+    }
+
+    .app-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .app-subtitle {
+      font-weight: 300;
+      font-size: 1rem;
+      opacity: 0.9;
+      margin-bottom: 1rem;
+    }
+
+    /* Content section with glassmorphism */
+    .app-content {
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    /* Form elements with glassmorphism */
+    .form-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #fff;
+    }
+
+    .form-control::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: rgba(255, 255, 255, 0.5);
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    select.form-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 1rem;
+      padding-right: 2.5rem;
+      color: #fff;
+    }
+
+    select.form-control option {
+      background-color: #333;
+      /* Dark background for options */
+      color: #fff;
+      /* Light text for options */
+    }
+
+    /* File upload with glassmorphism */
+    .file-upload {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      border: 2px dashed rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .file-upload:hover {
+      border-color: rgba(255, 255, 255, 0.5);
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .file-upload input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .file-upload-icon {
+      margin-bottom: 1rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .file-upload-text {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.8);
+      text-align: center;
+    }
+
+    /* Button styles with glassmorphism */
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      font-weight: 500;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: middle;
+      user-select: none;
+      border: 1px solid transparent;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: all 0.6s ease;
+    }
+
+    .btn:hover::before {
+      left: 100%;
+    }
+
+    .btn-primary {
+      color: #fff;
+      background: linear-gradient(135deg, rgba(106, 17, 203, 0.8), rgba(37, 117, 252, 0.8));
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, rgba(90, 12, 178, 0.9), rgba(30, 104, 224, 0.9));
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .btn-secondary {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-block {
+      display: block;
+      width: 100%;
+    }
+
+    /* Image preview with glassmorphism */
+    .image-preview {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .image-preview img {
+      max-width: 100%;
+      height: auto;
+      max-height: 250px;
+      border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      object-fit: cover;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Results section with glassmorphism */
+    .results-section {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 10px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .results-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #fff;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .skin-tone-badge {
+      display: inline-block;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      line-height: 1;
+      text-align: center;
+      white-space: nowrap;
+      vertical-align: baseline;
+      border-radius: 50rem;
+      color: #fff;
+      background: linear-gradient(135deg, rgba(106, 17, 203, 0.8), rgba(37, 117, 252, 0.8));
+      margin-bottom: 1.5rem;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Color recommendations with glassmorphism */
+    .color-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .color-item {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+
+    .color-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    /* Product Carousel with glassmorphism */
+    .product-carousel {
+      margin-top: 2rem;
+      position: relative;
+    }
+
+    .swiper-container {
+      width: 100%;
+      padding-bottom: 3rem;
+    }
+
+    .product-slide {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .product-slide:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .product-info {
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .product-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+
+    .product-link {
+      display: inline-block;
+      margin-top: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: linear-gradient(135deg, rgba(106, 17, 203, 0.8), rgba(37, 117, 252, 0.8));
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 0.85rem;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .product-link::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: all 0.6s ease;
+    }
+
+    .product-link:hover::before {
+      left: 100%;
+    }
+
+    .product-link:hover {
+      background: linear-gradient(135deg, rgba(90, 12, 178, 0.9), rgba(30, 104, 224, 0.9));
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .swiper-button-next,
+    .swiper-button-prev {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .swiper-pagination-bullet {
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .swiper-pagination-bullet-active {
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Error message with glassmorphism */
+    .error-message {
+      padding: 1rem;
+      border-radius: 10px;
+      background: rgba(250, 82, 82, 0.2);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(250, 82, 82, 0.3);
+      color: #fff;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .app-title {
+        font-size: 2rem;
+      }
+
+      .color-list {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      }
+    }
+
+    @media (max-width: 480px) {
+      .app-title {
+        font-size: 1.75rem;
+      }
+
+      .app-header,
+      .app-content {
+        padding: 1.5rem 1rem;
+      }
+
+      .file-upload {
+        padding: 1.5rem 1rem;
+      }
+    }
+
+    /* Loading indicator with glassmorphism */
+    .loading {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Performance optimizations */
+    @media (prefers-reduced-motion: reduce) {
+
+      .btn::before,
+      .product-link::before {
+        animation: none;
+        transition: none;
+      }
+    }
+
+    /* Optimize backdrop-filter usage for better performance */
+    @supports not (backdrop-filter: blur(12px)) {
+
+      .app-container,
+      .app-header::before,
+      .app-content,
+      .form-control,
+      .file-upload,
+      .btn-primary,
+      .btn-secondary,
+      .results-section,
+      .skin-tone-badge,
+      .color-item,
+      .product-slide,
+      .product-link,
+      .error-message,
+      .loading {
+        backdrop-filter: none;
+        background-color: rgba(30, 30, 50, 0.85);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Loading indicator -->
+  <div class="loading" id="loading">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <div class="app-container">
+    <div class="app-header">
+      <h1 class="app-title">Hue & You</h1>
+      <p class="app-subtitle">Upload your photo and get personalized fashion recommendations for your skin colour.</p>
+    </div>
+
+    <div class="app-content">
+      <form method='post' enctype='multipart/form-data' id="recommendation-form">
+        {% if not image_url %}
+        <div class="form-group" id="file-upload-section">
+          <label class="file-upload">
+            <div class="file-upload-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </div>
+            <div class="file-upload-text">
+              <p>Drag and drop your image here or click to browse</p>
+              <p style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.7;">Supported formats: JPG, PNG</p>
+            </div>
+            <input type='file' name='file' id="file" required>
+          </label>
+        </div>
+        {% else %}
+        <div class="image-preview">
+          <img src='{{ image_url }}' alt='Uploaded Image'>
+          <button type="button" class="btn btn-secondary" onclick="toggleFileInput()">Change Image</button>
+        </div>
+        <div class="form-group" id="file-upload-section" style="display: none;">
+          <label class="file-upload">
+            <div class="file-upload-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </div>
+            <div class="file-upload-text">
+              <p>Drag and drop your image here or click to browse</p>
+              <p style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.7;">Supported formats: JPG, PNG</p>
+            </div>
+            <input type='file' name='file' id="file">
+          </label>
+        </div>
+        <input type="hidden" name="image_url" value="{{ image_url }}">
+        {% endif %}
+
+        <div class="form-group">
+          <label for="gender-select" class="form-label">Select Gender</label>
+          <select name="gender" id="gender-select" class="form-control"
+            onchange="updateClothingOptions(); updateAmazonLinks();">
+            <option value="Male" {% if selected_gender=='Male' %}selected{% endif %}>Male</option>
+            <option value="Female" {% if selected_gender=='Female' %}selected{% endif %}>Female</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="clothing-select" class="form-label">Select Clothing Type</label>
+          <select name="clothing_type" id="clothing-select" class="form-control" onchange="updateAmazonLinks()"
+            required></select>
+        </div>
+
+        <button type='submit' class="btn btn-primary btn-block" id="submit-button">
+          Get Recommendations
+        </button>
+      </form>
+
+      {% if error %}
+      <div class="error-message">
+        <p>{{ error }}</p>
+      </div>
+      {% endif %}
+
+      {% if image_url %}
+      <div class="results-section">
+        <h2 class="results-title">Your Personalized Recommendations</h2>
+
+        <div class="skin-tone-result">
+          <span class="skin-tone-badge">{{ skin_tone }} Skin Tone</span>
+        </div>
+
+        <div class="recommended-colors">
+          <h3 class="results-title">Colors That Will Look Great On You</h3>
+          <div class="color-list" id="color-list">
+            {% for color in outfit_colors %}
+            <div class="color-item">{{ color }}</div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="product-carousel">
+          <h3 class="results-title">Shop These Looks</h3>
+
+          <!-- Swiper Carousel -->
+          <div class="swiper-container">
+            <div class="swiper-wrapper">
+              {% for product in products %}
+              <div class="swiper-slide">
+                <div class="product-slide">
+                  <img src="{{ product.image_url }}" alt="{{ product.color }} {{ product.clothing_type }}"
+                    class="product-image">
+                  <div class="product-info">
+                    <h4 class="product-title">{{ product.color }} {{ product.clothing_type }}</h4>
+                    <a href="{{ product.amazon_link }}" target="_blank" class="product-link">Shop Now</a>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+            <!-- Add Pagination -->
+            <div class="swiper-pagination"></div>
+            <!-- Add Navigation -->
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if outfit_colors %}
+  <script>
+    const recommendedColors = {{ outfit_colors | tojson }};
+  </script>
+  {% else %}
+  <script>
+    const recommendedColors = [];
+  </script>
+  {% endif %}
+
+  <!-- Swiper JS -->
+  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+
+  <script>
+    const clothingOptions = {
+      'Male': ['T-Shirt', 'Shirt', 'Jeans', 'Jacket', 'Sweatshirt'],
+      'Female': ['Dress', 'Top', 'Skirt', 'Blouse', 'Sweater']
+    };
+
+    function updateClothingOptions() {
+      const genderSelect = document.getElementById('gender-select');
+      const clothingSelect = document.getElementById('clothing-select');
+      const selectedGender = genderSelect.value;
+      clothingSelect.innerHTML = '';
+      clothingOptions[selectedGender].forEach(option => {
+        const opt = document.createElement('option');
+        opt.value = option;
+        opt.innerHTML = option;
+        clothingSelect.appendChild(opt);
+      });
+      {% if selected_clothing_type %}
+      clothingSelect.value = "{{ selected_clothing_type }}";
+      {% endif %}
+    }
+
+    function getAmazonLink(color, gender, clothingType) {
+      const genderQuery = (gender === "Male") ? "men" : "women";
+      const searchQuery = `${color} ${clothingType} for ${genderQuery}`;
+      return "https://www.amazon.in/s?k=" + encodeURIComponent(searchQuery);
+    }
+
+    function updateAmazonLinks() {
+      const gender = document.getElementById('gender-select').value;
+      const clothingType = document.getElementById('clothing-select').value;
+      const linksDiv = document.getElementById('amazonLinks');
+      if (linksDiv) {
+        let html = "";
+        recommendedColors.forEach(color => {
+          const url = getAmazonLink(color, gender, clothingType);
+          html += `<li class="amazon-link-item"><a href='${url}' target='_blank' class="amazon-link">${color} ${clothingType}</a></li>`;
+        });
+        linksDiv.innerHTML = html;
+      }
+    }
+
+    function toggleFileInput() {
+      const fileSection = document.getElementById('file-upload-section');
+      fileSection.style.display = (fileSection.style.display === "none") ? "block" : "none";
+    }
+
+    // File input visual feedback
+    const fileInput = document.getElementById('file');
+    if (fileInput) {
+      fileInput.addEventListener('change', function (e) {
+        const fileName = e.target.files[0]?.name;
+        if (fileName) {
+          const fileUploadText = this.parentElement.querySelector('.file-upload-text');
+          if (fileUploadText) {
+            fileUploadText.innerHTML = `<p>Selected file: ${fileName}</p>`;
+          }
+          this.parentElement.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+        }
+      });
+    }
+
+    // Form submission loading state
+    const form = document.getElementById('recommendation-form');
+    const loading = document.getElementById('loading');
+    if (form && loading) {
+      form.addEventListener('submit', function () {
+        loading.style.display = 'flex';
+        document.getElementById('submit-button').disabled = true;
+      });
+    }
+
+    // Initialize Swiper carousel
+    {% if products %}
+    const swiper = new Swiper('.swiper-container', {
+      slidesPerView: 1,
+      spaceBetween: 20,
+      loop: true,
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      breakpoints: {
+        // when window width is >= 640px
+        640: {
+          slidesPerView: 2,
+          spaceBetween: 20
+        },
+        // when window width is >= 768px
+        768: {
+          slidesPerView: 3,
+          spaceBetween: 30
+        }
+      }
+    });
+    {% endif %}
+
+    // Initialize on page load
+    window.onload = function () {
+      updateClothingOptions();
+
+      // Add color visualization to color items
+      const colorItems = document.querySelectorAll('.color-item');
+      colorItems.forEach(item => {
+        const colorName = item.textContent.trim();
+        const colorMap = {
+          'Pastel shades': '#FFD1DC',
+          'Light blue': '#ADD8E6',
+          'Lavender': '#E6E6FA',
+          'Peach': '#FFDAB9',
+          'Soft pink': '#FFB6C1',
+          'Mint green': '#98FB98',
+          'Earth tones': '#D2B48C',
+          'Olive green': '#808000',
+          'Mustard': '#FFDB58',
+          'Terracotta': '#E2725B',
+          'Warm brown': '#8B4513',
+          'Teal': '#008080',
+          'Bold colors': '#FF4500',
+          'Deep red': '#8B0000',
+          'Navy blue': '#000080',
+          'Emerald green': '#046307',
+          'Royal purple': '#7851A9',
+          'Bright orange': '#FF8C00',
+          'Neutral colors': '#D3D3D3'
+        };
+
+        const colorCode = colorMap[colorName] || '#cccccc';
+        item.style.borderTop = `3px solid ${colorCode}`;
+
+        // Add a subtle color background
+        item.style.background = `linear-gradient(to bottom, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05))`;
+        item.style.boxShadow = `0 0 15px rgba(${colorCode.replace('#', '').match(/.{2}/g).map(x => parseInt(x, 16)).join(', ')}, 0.3)`;
+      });
+    }
+  </script>
+</body>
+
+</html>
