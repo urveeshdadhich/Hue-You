@@ -1,4 +1,4 @@
-# 👗 Fashion Recommendation System – AI-Powered Outfit Suggestions  
+# 👗 Fashion Recommendation System – ML-Powered Outfit Suggestions  
 
 Fashion Recommendation is an intelligent system that suggests fashion items based on user preferences. Using **machine learning and NLP techniques**, it analyzes fashion trends and provides tailored recommendations.   
 
